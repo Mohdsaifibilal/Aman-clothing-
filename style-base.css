@@ -1,0 +1,210 @@
+/* ═══════════════════════════════════════════════════════════
+   AMAN CLOTHING — DESIGN SYSTEM & BASE STYLES
+   Pure monochrome luxury. Minimal. Timeless.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── DESIGN TOKENS ─── */
+:root {
+  /* Brand — pure monochrome */
+  --color-primary:       #0a0a0a;
+  --color-primary-hover: #1c1c1c;
+  --color-accent:        #0a0a0a;
+  --color-accent-hover:  #1c1c1c;
+  --color-bg:            #f2f0ec;
+  --color-surface:       #ffffff;
+  --color-surface-2:     #eae8e4;
+  --color-border:        #e0ddd9;
+  --color-text:          #0a0a0a;
+  --color-text-muted:    #706e6b;
+  --color-text-light:    #b0aeab;
+
+  /* Functional colors */
+  --color-error:         #c0392b;
+  --color-success:       #27ae60;
+  --color-warning:       #e67e22;
+
+  /* Typography — clean, refined sans-serif */
+  --font-display: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono:    'Courier New', monospace;
+
+  /* Type scale */
+  --text-xs:   0.6875rem;   /* 11px */
+  --text-sm:   0.8125rem;   /* 13px */
+  --text-base: 0.9375rem;   /* 15px */
+  --text-lg:   1.0625rem;   /* 17px */
+  --text-xl:   1.1875rem;   /* 19px */
+  --text-2xl:  1.375rem;    /* 22px */
+  --text-3xl:  1.75rem;     /* 28px */
+  --text-4xl:  2.25rem;     /* 36px */
+  --text-5xl:  3rem;        /* 48px */
+  --text-6xl:  4rem;        /* 64px */
+  --text-hero: clamp(3rem, 14vw, 7rem);
+
+  /* Spacing */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-pad: clamp(1rem, 4vw, 2rem);
+  --navbar-h:      56px;
+  --bottom-nav-h:  68px;
+
+  /* Radius */
+  --radius-sm:   2px;
+  --radius-md:   4px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-full: 9999px;
+
+  /* Shadows — very subtle */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.10);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,.12);
+
+  /* Transitions */
+  --ease:        cubic-bezier(.25,.46,.45,.94);
+  --ease-out:    cubic-bezier(.0,.0,.2,1);
+  --ease-in:     cubic-bezier(.4,.0,1,1);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+
+  --dur-fast:   100ms;
+  --dur-base:   200ms;
+  --dur-slow:   340ms;
+  --dur-slower: 560ms;
+
+  /* Hero image (override in config.theme to set a real photo) */
+  --hero-image: none;
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.6;
+  overflow-x: hidden;
+  /* Space for bottom nav on mobile */
+  padding-bottom: var(--bottom-nav-h);
+}
+
+@media (min-width: 900px) {
+  body { padding-bottom: 0; }
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+input, textarea, select {
+  font-family: inherit;
+  font-size: var(--text-base);
+  outline: none;
+  border: none;
+}
+ul, ol { list-style: none; }
+h1,h2,h3,h4,h5,h6 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+/* ─── UTILITIES ─── */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
+
+.flex           { display: flex; }
+.items-center   { align-items: center; }
+.justify-between{ justify-content: space-between; }
+.gap-2          { gap: var(--space-2); }
+.gap-4          { gap: var(--space-4); }
+.text-muted     { color: var(--color-text-muted); }
+.text-sm        { font-size: var(--text-sm); }
+.font-semibold  { font-weight: 600; }
+.mt-4           { margin-top: var(--space-4); }
+.hidden         { display: none !important; }
+
+/* ─── SKELETON ANIMATION ─── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton-line {
+  background: linear-gradient(90deg,
+    var(--color-surface-2) 25%,
+    var(--color-border) 50%,
+    var(--color-surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── PAGE LOADER ─── */
+.page-loader {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 60vh;
+}
+.loader-ring {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--color-border);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── EMPTY + ERROR STATES ─── */
+.empty-state {
+  padding: var(--space-20);
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+}
+.empty-state-icon  { font-size: 3rem; opacity: .2; }
+.empty-state-title { font-size: var(--text-2xl); font-weight: 400; }
+.empty-state-desc  { font-size: var(--text-sm); color: var(--color-text-muted); max-width: 320px; }
+.error-state {
+  padding: var(--space-20);
+  text-align: center;
+  color: var(--color-error);
+}
+
+/* ─── PAGE TRANSITIONS ─── */
+.page-enter {
+  animation: pageEnter var(--dur-slow) var(--ease-out) forwards;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

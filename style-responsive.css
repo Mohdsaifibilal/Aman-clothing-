@@ -1,0 +1,220 @@
+/* ═══════════════════════════════════════════════════════════
+   AMAN — RESPONSIVE BREAKPOINTS
+   Mobile-first. Fashion-grade.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Tablet → Desktop transition (900px) ─── */
+@media (min-width: 900px) {
+
+  /* Bottom nav hidden */
+  .bottom-nav { display: none !important; }
+
+  /* Product grid */
+  .product-detail-grid { grid-template-columns: 1fr 1fr; }
+  .product-detail-image-wrap { position: sticky; }
+
+  /* Footer */
+  .footer-inner { grid-template-columns: 2fr 1fr 1fr; }
+
+  /* Admin */
+  .admin-layout { flex-direction: row; }
+  .admin-sidebar {
+    width: 240px;
+    height: calc(100vh - var(--navbar-h));
+    position: sticky;
+    flex-direction: column;
+    overflow-y: auto;
+    display: flex;
+    gap: 0;
+    padding: var(--space-8) var(--space-4);
+  }
+  .admin-sidebar-title { display: block; }
+  .admin-content { padding: var(--space-8) var(--space-10); }
+
+  /* Search bar */
+  .product-search-wrap { max-width: 280px; }
+
+  /* Products section bottom padding */
+  .products-section { padding-bottom: var(--space-20); }
+}
+
+/* ─── Small tablet (640px) ─── */
+@media (min-width: 640px) {
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+  }
+
+  .hero-content { padding-bottom: var(--space-12); }
+}
+
+/* ─── Mobile max (639px) ─── */
+@media (max-width: 639px) {
+
+  /* Ensure 2-column grid on all small screens */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  /* Tighter card body on small screens */
+  .product-card-body { padding: var(--space-2) 0; }
+  .product-card-name { font-size: 9px; }
+  .product-price     { font-size: 9px; }
+
+  /* Add to cart button smaller on mobile */
+  .add-to-cart-btn {
+    width: 28px; height: 28px;
+  }
+
+  /* Collection header */
+  .collection-header { margin-bottom: var(--space-4); }
+  .collection-title  { font-size: 11px; }
+
+  /* Footer */
+  .footer-inner  { grid-template-columns: 1fr; gap: var(--space-8); }
+  .footer-bottom { flex-direction: column; text-align: center; }
+
+  /* Admin */
+  .admin-layout   { flex-direction: column; }
+  .admin-sidebar  {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .admin-sidebar-title { display: none; }
+  .admin-content { padding: var(--space-5) var(--space-4); }
+
+  /* Cart sidebar full-width on mobile */
+  .cart-sidebar { width: 100vw; }
+
+  /* Product detail full-bleed image on mobile */
+  .product-detail-info { padding-inline: var(--container-pad); }
+
+  /* Auth card */
+  .auth-card { padding: var(--space-7); }
+
+  /* Hero title smaller on very small screens */
+  .hero-title { font-size: clamp(2.5rem, 18vw, 5rem); }
+}
+
+/* ─── Safe area insets (iPhone notch / home bar) ─── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
+  }
+
+  body {
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 900px) {
+    body { padding-bottom: 0; }
+  }
+}
+
+/* ─── Touch device optimisations ─── */
+@media (hover: none) {
+  /* Prevent hover scale jumps on touch */
+  .product-card:hover .product-card-image img { transform: none; }
+  .btn-primary:hover   { transform: none; }
+  .btn-outline:hover   { transform: none; }
+  .add-to-cart-btn:hover { transform: none; }
+}
+
+/* ─── Landscape mobile ─── */
+@media (max-width: 900px) and (orientation: landscape) {
+  .hero-visual {
+    height: 65vw;
+    min-height: 320px;
+  }
+}
+
+/* ─── About Page ─── */
+@media (min-width: 768px) {
+  .about-story-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: var(--space-16) !important;
+  }
+}
+
+/* ─── Contact Page ─── */
+@media (min-width: 768px) {
+  .contact-main-grid {
+    grid-template-columns: 1fr 1.6fr !important;
+    gap: var(--space-16) !important;
+  }
+}
+
+/* ─── About & Contact — inline grid fix on mobile ─── */
+@media (max-width: 767px) {
+
+  /* Force single column on any inline grid inside sections */
+  section > .container > div[style*="grid-template-columns:1fr 1fr"],
+  section > .container > div[style*="grid-template-columns:1fr 1.6fr"] {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-8) !important;
+  }
+
+  /* About story image — smaller aspect ratio on mobile */
+  div[style*="aspect-ratio:4/5"] {
+    aspect-ratio: 16/9 !important;
+    max-height: 260px;
+  }
+
+  /* Contact form card — reduce padding on mobile */
+  div[style*="padding:var(--space-8)"] {
+    padding: var(--space-5) !important;
+  }
+
+  /* Page header h1 — prevent overflow */
+  div[style*="padding:calc(var(--navbar-h)"] h1 {
+    font-size: clamp(1.8rem, 8vw, 3rem) !important;
+    word-break: break-word;
+  }
+
+  /* Contact info items spacing */
+  div[style*="display:flex;gap:var(--space-4)"] {
+    gap: var(--space-3) !important;
+  }
+
+  /* Stats bar numbers */
+  div[style*="font-size:var(--text-4xl)"] {
+    font-size: clamp(1.5rem, 7vw, 2.5rem) !important;
+  }
+
+  /* Section padding reduce */
+  section[style*="padding:var(--space-20)"] {
+    padding-top: var(--space-12) !important;
+    padding-bottom: var(--space-12) !important;
+  }
+
+  /* Admin stats grid */
+  div[style*="grid-template-columns:repeat(auto-fill,minmax(160px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Admin form 2-col grids → 1 col */
+  div[style*="grid-template-columns:1fr 1fr;gap:1rem"],
+  div[style*="grid-template-columns:1fr 1fr;gap:var(--space-4)"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ─── Contact page section padding on mobile ─── */
+@media (max-width: 639px) {
+  /* Container horizontal padding */
+  .container {
+    padding-inline: var(--space-4) !important;
+  }
+}

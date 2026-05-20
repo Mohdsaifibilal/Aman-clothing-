@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="site-title">Loading...</title>
+
+  <!-- STYLES — split by page & component -->
+  <link rel="stylesheet" href="style-base.css" />
+  <link rel="stylesheet" href="style-component-buttons.css" />
+  <link rel="stylesheet" href="style-component-navbar.css" />
+  <link rel="stylesheet" href="style-component-productCard.css" />
+  <link rel="stylesheet" href="style-component-cart.css" />
+  <link rel="stylesheet" href="style-component-modal.css" />
+  <link rel="stylesheet" href="style-component-footer.css" />
+  <link rel="stylesheet" href="style-page-home.css" />
+  <link rel="stylesheet" href="style-page-product.css" />
+  <link rel="stylesheet" href="style-page-admin.css" />
+  <link rel="stylesheet" href="style-page-auth.css" />
+  <link rel="stylesheet" href="style-responsive.css" />
+
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="notification-container" aria-live="polite" aria-atomic="false"></div>
+  <div id="navbar-root"></div>
+
+  <div id="cart-overlay" class="cart-overlay"></div>
+  <aside id="cart-sidebar" class="cart-sidebar" aria-label="Shopping Cart">
+    <div id="cart-root"></div>
+  </aside>
+
+  <main id="app-root" role="main">
+    <div class="page-loader">
+      <div class="loader-ring"></div>
+    </div>
+  </main>
+
+  <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true">
+    <div id="modal-content" class="modal-content"></div>
+  </div>
+
+  <footer id="footer-root"></footer>
+
+  <!-- 1. Supabase CDN — fallback if offline/CDN fails -->
+  <script>window._supabaseLoadError = false;</script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    onerror="window._supabaseLoadError=true;window.supabase={createClient:function(){return null;}};">
+  </script>
+
+  <!-- 2. Config — ONLY file you change per site -->
+  <script src="config.js"></script>
+
+  <!-- 3-10. Engine layer -->
+  <script src="engine-core.js"></script>
+  <script src="engine-store.js"></script>
+  <script src="engine-cart.js"></script>
+  <script src="engine-supabase.js"></script>
+  <script src="engine-api.js"></script>
+  <script src="engine-payment.js"></script>
+  <script src="engine-logic.js"></script>
+  <script src="engine-renderer.js"></script>
+  <script src="engine-router.js"></script>
+
+  <!-- 11-15. Components -->
+  <script src="component-navbar.js"></script>
+  <script src="component-productCard.js"></script>
+  <script src="component-cart.js"></script>
+  <script src="component-modal.js"></script>
+  <script src="component-footer.js"></script>
+
+  <!-- 16-20. Pages -->
+  <script src="page-home.js"></script>
+  <script src="page-shop.js"></script>
+  <script src="page-about.js"></script>
+  <script src="page-contact.js"></script>
+  <script src="page-orders.js"></script>
+  <script src="page-product.js"></script>
+  <script src="page-admin.js"></script>
+  <script src="page-cart.js"></script>
+  <script src="page-auth.js"></script>
+
+  <!-- 21. Bootstrap — runs last -->
+  <script src="app.js"></script>
+
+</body>
+</html>
