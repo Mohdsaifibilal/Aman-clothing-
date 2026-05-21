@@ -101,7 +101,7 @@ window.SITE_CONFIG = {
 
   /* ── Admin ── */
   admin: {
-    adminEmails: ['admin@aman.com', 'saifibilal385@gmail.com'],
+    adminEmails: ['admin@aman.com', 'mohd.laraib9980@gmail.com'],
   },
 
   /* ── About Us ── */
