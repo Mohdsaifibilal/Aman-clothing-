@@ -164,7 +164,7 @@ Engine.Pages.CartPage = (() => {
 
             <button id="address-modal-submit" class="btn btn-primary btn-full btn-lg"
                     style="margin-top:var(--space-2)">
-              Place Order
+              ${(window.SITE_CONFIG?.payment?.provider || 'demo') !== 'demo' ? '🔒 Pay Now' : 'Place Order'}
             </button>
 
           </div>
@@ -317,7 +317,7 @@ Engine.Pages.CartPage = (() => {
         if (e.target.id === 'address-modal-overlay') _closeAddressModal();
       });
 
-    /* Place Order button inside modal */
+    /* Place Order / Pay Now button inside modal */
     document.getElementById('address-modal-submit')
       ?.addEventListener('click', async () => {
         if (_checkingOut) return;
@@ -332,23 +332,65 @@ Engine.Pages.CartPage = (() => {
         }
         if (errEl) errEl.style.display = 'none';
 
-        _checkingOut = true;
-        if (btn) { btn.disabled = true; btn.textContent = 'Placing Order…'; }
-
         const items = Engine.Store.get('cart');
         const user  = Engine.Store.get('user');
-        const { error } = await Engine.API.createOrder(items, user?.id, address);
+        const total = items.reduce((s, i) => s + i.product.price * i.quantity, 0);
 
-        _checkingOut = false;
-        if (btn) { btn.disabled = false; btn.textContent = 'Place Order'; }
+        const provider = (window.SITE_CONFIG?.payment?.provider || 'demo').toLowerCase();
 
-        if (error) {
-          if (errEl) { errEl.textContent = error; errEl.style.display = 'block'; }
-          Engine.EventBus.emit(Engine.Events.NOTIFY, { msg: error, type: 'error', duration: 6000 });
+        /* ── RAZORPAY or STRIPE flow ── */
+        if (provider === 'razorpay' || provider === 'stripe') {
+          _checkingOut = true;
+          if (btn) { btn.disabled = true; btn.textContent = 'Opening Payment…'; }
+
+          Engine.Payment.startPayment({
+            amount: total,
+            items,
+            user,
+            onSuccess: ({ orderId }) => {
+              /* Save address to order after payment — best-effort update */
+              if (orderId && orderId !== 'demo_verified_' + orderId) {
+                Engine.API.updateOrderAddress(orderId, address).catch(() => {});
+              }
+              _checkingOut = false;
+              if (btn) { btn.disabled = false; btn.textContent = 'Pay Now'; }
+              _closeAddressModal();
+              Engine.EventBus.emit(Engine.Events.NOTIFY, {
+                msg: '🎉 Payment successful! Order confirmed.',
+                type: 'success',
+                duration: 6000,
+              });
+              _renderPage();
+              /* Navigate to orders after short delay */
+              setTimeout(() => Engine.Router.navigate('/orders'), 2500);
+            },
+            onFailure: ({ error: payErr }) => {
+              _checkingOut = false;
+              if (btn) { btn.disabled = false; btn.textContent = 'Pay Now'; }
+              if (payErr && payErr !== 'cancelled') {
+                if (errEl) { errEl.textContent = payErr; errEl.style.display = 'block'; }
+              }
+            },
+          });
+
+        /* ── DEMO / COD flow — no payment gateway ── */
         } else {
-          _closeAddressModal();
-          Engine.EventBus.emit(Engine.Events.NOTIFY, { msg: 'Order place ho gayi! 🎉', type: 'success' });
-          _renderPage();
+          _checkingOut = true;
+          if (btn) { btn.disabled = true; btn.textContent = 'Placing Order…'; }
+
+          const { error } = await Engine.API.createOrder(items, user?.id, address);
+
+          _checkingOut = false;
+          if (btn) { btn.disabled = false; btn.textContent = 'Place Order'; }
+
+          if (error) {
+            if (errEl) { errEl.textContent = error; errEl.style.display = 'block'; }
+            Engine.EventBus.emit(Engine.Events.NOTIFY, { msg: error, type: 'error', duration: 6000 });
+          } else {
+            _closeAddressModal();
+            Engine.EventBus.emit(Engine.Events.NOTIFY, { msg: 'Order place ho gayi! 🎉', type: 'success' });
+            _renderPage();
+          }
         }
       });
   }
