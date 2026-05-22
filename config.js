@@ -1,21 +1,21 @@
 /**
  * ═══════════════════════════════════════════════════════════
- * SITE CONFIG — STRYDE FOOTWEAR
+ * SITE CONFIG — AMAN CLOTHING
  * ═══════════════════════════════════════════════════════════
  */
 
 window.SITE_CONFIG = {
 
   /* ── Identity ── */
-  name:        'STRYDE',
-  tagline:     'Built for the Bold.',
-  description: 'Premium footwear engineered for those who move with purpose.',
-  logo:        'STRYDE',
+  name:        'AMAN',
+  tagline:     'Minimal. Timeless. Yours.',
+  description: 'Premium minimal streetwear crafted for the modern generation.',
+  logo:        'AMAN',
 
   /* ── Supabase credentials ── */
   supabase: {
-    url:     'https://YOUR_PROJECT.supabase.co',
-    anonKey: 'YOUR_ANON_KEY',
+    url:     'https://jjjhctruyyjexjljmroe.supabase.co',
+    anonKey: 'sb_publishable_xKJ6hXc8O6LrVBq0LXQ9hQ_PCt3Jwl8',
   },
 
   /* ── Tables ── */
@@ -25,17 +25,14 @@ window.SITE_CONFIG = {
     users:    'users',
   },
 
-  /* ── Navigation ── */
+  /* ── Navigation (used in menu drawer) ── */
   nav: [
-    { label: 'HOME',        href: '#/'                    },
-    { label: 'SNEAKERS',    href: '#/category/sneakers'   },
-    { label: 'RUNNING',     href: '#/category/running'    },
-    { label: 'BASKETBALL',  href: '#/category/basketball' },
-    { label: 'BOOTS',       href: '#/category/boots'      },
-    { label: 'LOAFERS',     href: '#/category/loafers'    },
-    { label: 'SANDALS',     href: '#/category/sandals'    },
-    { label: 'FORMAL',      href: '#/category/formal'     },
-    { label: 'LIMITED',     href: '#/category/limited'    },
+    { label: 'HOME',     href: '#/'                 },
+    { label: 'HOODIES',  href: '#/category/hoodies' },
+    { label: 'T-SHIRTS', href: '#/category/t-shirts'},
+    { label: 'SHIRTS',   href: '#/category/shirts'  },
+    { label: 'ABOUT US', href: '#/about'            },
+    { label: 'CONTACT',  href: '#/contact'          },
   ],
 
   /* ── Footer ── */
@@ -44,22 +41,17 @@ window.SITE_CONFIG = {
       {
         title: 'Shop',
         links: [
-          { label: 'Sneakers',   href: '#/category/sneakers'   },
-          { label: 'Running',    href: '#/category/running'    },
-          { label: 'Basketball', href: '#/category/basketball' },
-          { label: 'Boots',      href: '#/category/boots'      },
-          { label: 'Loafers',    href: '#/category/loafers'    },
-          { label: 'Limited',    href: '#/category/limited'    },
+          { label: 'Hoodies',       href: '#/category/hoodies'  },
+          { label: 'T-Shirts',      href: '#/category/t-shirts' },
+          { label: 'Shirts',        href: '#/category/shirts'   },
         ]
       },
       {
         title: 'Info',
         links: [
-          { label: 'About Us',     href: '#/about'      },
-          { label: 'Size Guide',   href: '#/size-guide' },
-          { label: 'Contact',      href: '#/contact'    },
-          { label: 'Easy Returns', href: '#/returns'    },
-          { label: 'Track Order',  href: '#/orders'     },
+          { label: 'About Us',  href: '#/about'   },
+          { label: 'Contact',   href: '#/contact' },
+          { label: '7-Day Returns', href: '#/returns' },
         ]
       }
     ]
@@ -67,31 +59,26 @@ window.SITE_CONFIG = {
 
   /* ── Hero ── */
   hero: {
-    eyebrow:      'Season 01',
-    title:        'STEP<br>DIFFERENT',
-    desc:         'Built for the Bold. Crafted for the streets.',
-    ctaPrimary:   { label: 'Shop Now',     href: '#products'          },
-    ctaSecondary: { label: 'New Arrivals', href: '#/category/limited' },
+    eyebrow:      'New Season',
+    title:        'NEW<br>SEASON',
+    desc:         'Minimal. Timeless. Yours.',
+    ctaPrimary:   { label: 'Shop Now', href: '#/shop' },
+    ctaSecondary: { label: 'Explore',  href: '#/about'   },
     stats: [],
-    badge: 'FREE SHIPPING ON ORDERS ABOVE ₹1499',
+    badge: 'FREE SHIPPING ABOVE ₹999',
   },
 
   /* ── Products section ── */
   products: {
-    sectionEyebrow:  'Season 01',
-    sectionTitle:    'New Arrivals',
-    sectionSubtitle: 'Every step tells a story.',
+    sectionEyebrow:  'Drop 01',
+    sectionTitle:    'New Season',
+    sectionSubtitle: 'Crafted for the ones who move quietly.',
     lowStockThreshold: 5,
     categories: [
-      { slug: 'all',        label: 'ALL'        },
-      { slug: 'sneakers',   label: 'SNEAKERS'   },
-      { slug: 'running',    label: 'RUNNING'    },
-      { slug: 'basketball', label: 'BASKETBALL' },
-      { slug: 'boots',      label: 'BOOTS'      },
-      { slug: 'loafers',    label: 'LOAFERS'    },
-      { slug: 'sandals',    label: 'SANDALS'    },
-      { slug: 'formal',     label: 'FORMAL'     },
-      { slug: 'limited',    label: 'LIMITED'    },
+      { slug: 'all',      label: 'ALL'      },
+      { slug: 'hoodies',  label: 'HOODIES'  },
+      { slug: 't-shirts', label: 'T-SHIRTS' },
+      { slug: 'shirts',   label: 'SHIRTS'   },
     ],
   },
 
@@ -114,34 +101,77 @@ window.SITE_CONFIG = {
 
   /* ── Admin ── */
   admin: {
-    adminEmails: ['admin@stryde.com'],
+    adminEmails: ['admin@aman.com', 'mohd.laraib9980@gmail.com'],
   },
 
-  /* ── Payment ── */
+  /* ── About Us ── */
+  about: {
+    headline:    'Built Different',
+    subline:     'Premium minimal streetwear crafted for the modern generation.',
+    storyTitle:  'Born in Lucknow, Made for Everyone',
+    storyP1:     'AMAN started with one simple idea — clothing should feel as good as it looks. We believe in clean cuts, quality fabrics, and designs that never go out of style. No loud logos, no unnecessary details.',
+    storyP2:     'Made in India for those who move quietly but make an impact. Every piece we create is crafted with care — because you deserve clothing that works as hard as you do.',
+    storyImage:  'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=80',
+    values: [
+      { icon: '✦', title: 'Quality First',    desc: 'Premium fabrics that feel great and last long.' },
+      { icon: '◈', title: 'Minimal Design',   desc: 'Clean cuts and timeless styles, no unnecessary details.' },
+      { icon: '❋', title: 'Made in India',    desc: 'Proudly crafted in India for the modern generation.' },
+      { icon: '⟡', title: 'Honest Pricing',   desc: 'Premium quality without the premium markup.' },
+    ],
+  },
+
+  /* ── Contact ── */
+  contact: {
+    email:     'saifibilal385@gmail.com',
+    whatsapp:  '+919235052684',
+    address:   'Lucknow, Uttar Pradesh, India',
+    hours:     'Within 24 hours (Mon–Sat)',
+    tagline:   'Have a question about your order, sizing, or just want to say hello? We are here.',
+  },
+
+  /* ── Payment ──
+     provider:  'razorpay' | 'stripe' | 'demo'
+     razorpay → set RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET in Supabase Edge Function env
+     demo     → no real money, works offline for testing
+  ── */
   payment: {
-    provider:        'demo',
-    razorpayKeyId:   'rzp_test_Ss0QakTcjWWNYc',
+    provider:        'razorpay',          /* Switch to 'demo' to test without real payment */
+    razorpayKeyId:   'rzp_test_Ss0QakTcjWWNYc', /* Razorpay Test Key */
     stripePublicKey: 'bqBpen5KUcR9j5hspYTNLXgA',
     currency:        'INR',
   },
 
-  /* ── Theming — Red + White Athletic ── */
+  /* ── Shiprocket ──
+     Deep integration: auto-create shipments after payment confirmed.
+     Set these in Supabase Dashboard → Edge Functions → Secrets:
+       SHIPROCKET_EMAIL    → your Shiprocket login email
+       SHIPROCKET_PASSWORD → your Shiprocket login password
+     pickupLocation: the pickup address label from your Shiprocket dashboard
+  ── */
+  shiprocket: {
+    enabled:        true,                /* false = manual tracking (existing flow) */
+    pickupLocation: 'Primary',           /* Pickup location label in Shiprocket dashboard */
+    autoCreate:     true,                /* Auto-create shipment when admin confirms order */
+    courierCode:    null,                /* null = let Shiprocket pick best courier */
+  },
+
+  /* ── Theming ── */
   theme: {
-    '--color-primary':       '#C8102E',
-    '--color-primary-hover': '#a00c24',
-    '--color-accent':        '#C8102E',
-    '--color-accent-hover':  '#a00c24',
-    '--color-bg':            '#F7F4F1',
-    '--color-surface':       '#FFFFFF',
-    '--color-surface-2':     '#F0ECE8',
-    '--color-border':        '#E4DED8',
-    '--color-text':          '#0F0F0F',
-    '--color-text-muted':    '#6B6560',
-    '--color-text-light':    '#B0A8A3',
-    '--font-display':        "'Barlow Condensed', system-ui, sans-serif",
-    '--font-body':           "'Manrope', system-ui, sans-serif",
-    '--navbar-h':            '60px',
-    '--hero-image':          'url(https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1400&q=80)',
+    '--color-primary':       '#0a0a0a',
+    '--color-primary-hover': '#1c1c1c',
+    '--color-accent':        '#0a0a0a',
+    '--color-accent-hover':  '#1c1c1c',
+    '--color-bg':            '#f2f0ec',
+    '--color-surface':       '#ffffff',
+    '--color-surface-2':     '#eae8e4',
+    '--color-border':        '#e0ddd9',
+    '--color-text':          '#0a0a0a',
+    '--color-text-muted':    '#706e6b',
+    '--color-text-light':    '#b0aeab',
+    '--font-display':        "'DM Sans', system-ui, sans-serif",
+    '--font-body':           "'DM Sans', system-ui, sans-serif",
+    '--navbar-h':            '56px',
+    '--hero-image':          'url(https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1200&q=80)',
   },
 
 };
