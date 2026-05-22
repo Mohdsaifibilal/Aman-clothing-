@@ -1070,6 +1070,213 @@ Engine.API = (() => {
 
 
   /* ══════════════════════════════════════════════════════════
+     UPDATE ORDER ADDRESS — called after Razorpay payment success
+     Saves delivery address collected before payment popup
+  ══════════════════════════════════════════════════════════ */
+
+  async function updateOrderAddress(orderId, address) {
+    if (!orderId || !address) return { error: 'Order ID and address required' };
+
+    /* Demo mode — just update store */
+    if (_isDemo()) {
+      const orders = Engine.Store.get('orders') || [];
+      Engine.Store.set('orders', orders.map(o =>
+        o.id === orderId ? { ...o, address: JSON.stringify(address) } : o
+      ));
+      return { error: null };
+    }
+
+    if (!SupabaseClient.isReady()) return { error: 'Not connected' };
+
+    try {
+      const { error } = await SupabaseClient.get()
+        .from(_table('orders'))
+        .update({
+          address:    JSON.stringify(address),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', orderId);
+
+      if (error) throw error;
+      return { error: null };
+    } catch (err) {
+      Engine.Logger.error('API', 'updateOrderAddress failed', err);
+      return { error: _formatError(err) };
+    }
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
+     SHIPROCKET INTEGRATION
+     ══════════════════════════════════════════════════════════
+     createShiprocketOrder  — auto-creates shipment after order confirmed
+     trackShiprocketOrder   — fetch live tracking status
+     cancelShiprocketOrder  — cancel shipment if order cancelled
+
+     All calls go via Supabase Edge Function 'shiprocket-proxy'
+     which holds SHIPROCKET_EMAIL + SHIPROCKET_PASSWORD securely.
+     Frontend never sees Shiprocket credentials.
+     ══════════════════════════════════════════════════════════ */
+
+  async function createShiprocketOrder(orderId) {
+    if (!orderId) return { error: 'Order ID required' };
+
+    /* Demo mode — simulate Shiprocket response */
+    if (_isDemo()) {
+      const fakeShipment = {
+        shiprocket_order_id:    'SR_DEMO_' + Date.now(),
+        shiprocket_shipment_id: 'SHP_DEMO_' + Date.now(),
+        awb_code:               'AWB' + Math.floor(Math.random() * 9000000 + 1000000),
+        courier_name:           'Delhivery',
+        tracking_url:           'https://shiprocket.co/tracking/demo',
+      };
+      Engine.Logger.info('API', 'Shiprocket demo order created', fakeShipment);
+      return { data: fakeShipment, error: null };
+    }
+
+    if (!SupabaseClient.isReady()) return { error: 'Service unavailable' };
+
+    /* Check if Shiprocket integration is enabled */
+    if (!window.SITE_CONFIG?.shiprocket?.enabled) {
+      return { error: 'Shiprocket integration not enabled in config' };
+    }
+
+    try {
+      /* Fetch full order details first */
+      const { data: order, error: fetchErr } = await SupabaseClient.get()
+        .from(_table('orders'))
+        .select('*')
+        .eq('id', orderId)
+        .single();
+
+      if (fetchErr || !order) {
+        return { error: fetchErr ? _formatError(fetchErr) : 'Order not found' };
+      }
+
+      if (!order.address) {
+        return { error: 'Delivery address not set on order — cannot create shipment' };
+      }
+
+      /* Call Supabase Edge Function which talks to Shiprocket API */
+      const { data, error } = await SupabaseClient.get()
+        .functions.invoke('shiprocket-proxy', {
+          body: {
+            action:          'create_order',
+            order_id:        orderId,
+            order:           order,
+            pickup_location: window.SITE_CONFIG.shiprocket.pickupLocation || 'Primary',
+            courier_code:    window.SITE_CONFIG.shiprocket.courierCode    || null,
+          },
+        });
+
+      if (error) throw error;
+
+      if (!data?.success) {
+        return { error: data?.error || 'Shiprocket order creation failed' };
+      }
+
+      /* Save Shiprocket details to order record */
+      const shipmentData = {
+        shiprocket_order_id:    data.shiprocket_order_id,
+        shiprocket_shipment_id: data.shiprocket_shipment_id,
+        courier:                data.courier_name   || 'Shiprocket',
+        tracking_id:            data.awb_code       || null,
+        tracking_url:           data.tracking_url   || `https://shiprocket.co/tracking/${data.awb_code}`,
+        shipment_status:        'shipped',
+        order_status:           'shipped',
+        updated_at:             new Date().toISOString(),
+      };
+
+      await SupabaseClient.get()
+        .from(_table('orders'))
+        .update(shipmentData)
+        .eq('id', orderId);
+
+      /* Update local store */
+      const orders = Engine.Store.get('orders') || [];
+      Engine.Store.set('orders', orders.map(o =>
+        o.id === orderId ? { ...o, ...shipmentData } : o
+      ));
+
+      _cacheInvalidate('orders:');
+
+      Engine.Logger.info('API', 'Shiprocket order created successfully', data);
+      return { data, error: null };
+
+    } catch (err) {
+      Engine.Logger.error('API', 'createShiprocketOrder failed', err);
+      return { error: _formatError(err) };
+    }
+  }
+
+
+  async function trackShiprocketOrder(orderId, awbCode) {
+    /* Demo mode */
+    if (_isDemo()) {
+      return {
+        data: {
+          current_status: 'In Transit',
+          shipment_track: [
+            { date: new Date().toISOString(), activity: 'Shipment picked up', location: 'Lucknow' },
+            { date: new Date(Date.now() - 3600000).toISOString(), activity: 'In Transit', location: 'Delhi Hub' },
+          ],
+        },
+        error: null,
+      };
+    }
+
+    if (!SupabaseClient.isReady()) return { error: 'Service unavailable' };
+
+    try {
+      const { data, error } = await SupabaseClient.get()
+        .functions.invoke('shiprocket-proxy', {
+          body: {
+            action:   'track_order',
+            order_id: orderId,
+            awb_code: awbCode,
+          },
+        });
+
+      if (error) throw error;
+      return { data: data || {}, error: null };
+
+    } catch (err) {
+      Engine.Logger.error('API', 'trackShiprocketOrder failed', err);
+      return { error: _formatError(err) };
+    }
+  }
+
+
+  async function cancelShiprocketOrder(orderId, shiprocketOrderId) {
+    if (!orderId || !shiprocketOrderId) return { error: 'Order IDs required' };
+
+    if (_isDemo()) {
+      return { data: { success: true }, error: null };
+    }
+
+    if (!SupabaseClient.isReady()) return { error: 'Service unavailable' };
+
+    try {
+      const { data, error } = await SupabaseClient.get()
+        .functions.invoke('shiprocket-proxy', {
+          body: {
+            action:               'cancel_order',
+            order_id:             orderId,
+            shiprocket_order_id:  shiprocketOrderId,
+          },
+        });
+
+      if (error) throw error;
+      return { data: data || {}, error: null };
+
+    } catch (err) {
+      Engine.Logger.error('API', 'cancelShiprocketOrder failed', err);
+      return { error: _formatError(err) };
+    }
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
      REVIEWS API
      getReviews(productId)   — fetch all reviews + rating
      createReview(payload)   — submit new review (auth required)
@@ -1463,6 +1670,7 @@ Engine.API = (() => {
     createProduct, updateProduct, deleteProduct, updateStock,
     createOrder,
     createPaymentOrder, verifyPayment,
+    updateOrderAddress,
     getMyOrders, getAllOrders, updateOrderStatus, updateShipment,
     signIn, signUp, signOut, getSession, onAuthStateChange,
     getReviews, createReview, deleteReview,
@@ -1470,6 +1678,8 @@ Engine.API = (() => {
     getHomeReviews,
     getInstaFeed, getAllInstaPosts, saveInstaPost, deleteInstaPost,
     subscribeNewsletter,
+    /* Shiprocket */
+    createShiprocketOrder, trackShiprocketOrder, cancelShiprocketOrder,
   };
 
 })();
