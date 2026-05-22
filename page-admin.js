@@ -1206,6 +1206,19 @@ Engine.Pages.Admin = (() => {
                               style="white-space:nowrap">
                               🚚 Ship
                             </button>
+                            ${window.SITE_CONFIG?.shiprocket?.enabled && !order.shiprocket_order_id ? `
+                            <button
+                              class="btn btn-sm"
+                              style="white-space:nowrap;background:#ff6b35;color:#fff;border:none"
+                              data-shiprocket-create="${Engine.Renderer.escape(order.id)}">
+                              📦 Auto-Ship via Shiprocket
+                            </button>` : ''}
+                            ${order.shiprocket_order_id ? `
+                            <span style="font-size:var(--text-xs);color:var(--color-success);
+                                         padding:2px 8px;background:rgba(39,174,96,.1);
+                                         border-radius:4px;white-space:nowrap">
+                              ✓ Shiprocket #${Engine.Renderer.escape(order.shiprocket_order_id)}
+                            </span>` : ''}
                           </div>
 
                           <!-- Tracking link if already shipped -->
@@ -1379,6 +1392,48 @@ Engine.Pages.Admin = (() => {
               shipDiv.appendChild(link);
             }
           }
+        }
+      });
+    });
+
+    /* ── SHIPROCKET AUTO-CREATE — 📦 Auto-Ship via Shiprocket button ── */
+    const _srCreating = new Set();
+
+    document.querySelectorAll('[data-shiprocket-create]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const orderId = btn.dataset.shiprocketCreate;
+        if (_srCreating.has(orderId)) return;
+
+        _srCreating.add(orderId);
+        const originalText = btn.textContent;
+        btn.disabled   = true;
+        btn.textContent = '⏳ Creating shipment…';
+
+        Engine.EventBus.emit(Engine.Events.NOTIFY, {
+          msg: 'Creating Shiprocket shipment…', type: 'info',
+        });
+
+        const { data, error } = await Engine.API.createShiprocketOrder(orderId);
+
+        _srCreating.delete(orderId);
+        btn.disabled    = false;
+        btn.textContent = originalText;
+
+        if (error) {
+          Engine.EventBus.emit(Engine.Events.NOTIFY, {
+            msg: `Shiprocket error: ${error}`, type: 'error', duration: 8000,
+          });
+        } else {
+          Engine.EventBus.emit(Engine.Events.NOTIFY, {
+            msg: `✓ Shipment created! AWB: ${data?.awb_code || 'N/A'} via ${data?.courier_name || 'Shiprocket'}`,
+            type: 'success',
+            duration: 6000,
+          });
+          /* Replace button with Shiprocket order ID badge + refresh orders */
+          btn.closest('[data-shiprocket-create]') && btn.remove();
+          await Engine.API.getAllOrders();
+          /* Partial UI update — re-render just the row without losing scroll position */
+          setTimeout(() => Engine.Pages.Admin.render(), 500);
         }
       });
     });
