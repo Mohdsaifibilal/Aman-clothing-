@@ -46,6 +46,32 @@
 
   <footer id="footer-root"></footer>
 
+  <!-- 0. Razorpay SDK — loaded conditionally based on config -->
+  <script>
+    /* Load Razorpay SDK only if configured — avoids unnecessary request in demo mode */
+    (function() {
+      var cfg = null;
+      /* cfg will be available after config.js loads — we load SDK after DOMContentLoaded */
+      window._razorpaySDKLoaded = false;
+      function _loadRazorpayIfNeeded() {
+        try {
+          cfg = window.SITE_CONFIG && window.SITE_CONFIG.payment;
+          if (cfg && cfg.provider === 'razorpay') {
+            var s = document.createElement('script');
+            s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            s.onload = function() { window._razorpaySDKLoaded = true; };
+            s.onerror = function() { console.warn('[Payment] Razorpay SDK load failed — check connectivity'); };
+            document.head.appendChild(s);
+          }
+        } catch(e) {}
+      }
+      /* Run after all scripts parsed */
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(_loadRazorpayIfNeeded, 0);
+      });
+    })();
+  </script>
+
   <!-- 1. Supabase CDN — fallback if offline/CDN fails -->
   <script>window._supabaseLoadError = false;</script>
   <script
